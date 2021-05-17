@@ -2,16 +2,32 @@ package com.java.junggo;
 
 import java.awt.Container;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.util.ArrayList;
 
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JRadioButton;
 import javax.swing.JTextField;
+
+import com.java.dao.MemberDao;
+import com.java.dto.MemberDto;
 
 public class FindIdPw extends JFrame{
 
+	public JTextField idTxt, nameTxt, birthTxt, phoneTxt, emailTxt;
+	public JLabel nameLabel,idLabel,birthLabel,phoneLabel,eamilLabel;
+	public JButton findIdBtn;
+	public JButton findPwBtn;
+	
 public FindIdPw(){
 		
 		
@@ -22,7 +38,67 @@ public FindIdPw(){
 		panel.setLayout(null);
 		
 		
-		//폰드
+		
+		//버튼
+		
+		//아이디 찾기
+		findIdBtn = new JButton("아이디찾기");  
+		findIdBtn.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				MemberDto dto = new MemberDto();
+				MemberDao dao = new MemberDao();
+				
+				
+		
+				
+				
+
+				if(dto.getM_id() != null) {
+					dto=dao.findId(nameTxt.getText(),birthTxt.getText(),phoneTxt.getText(),emailTxt.getText());
+					JOptionPane.showMessageDialog(null, "아이디는( "+dto.getM_id()+" )입니다.", "아이디 찾기", JOptionPane.INFORMATION_MESSAGE);
+				}
+				else {
+					JOptionPane.showMessageDialog(null, "가입된 정보가 없습니다", "아이디 찾기", JOptionPane.ERROR_MESSAGE);
+				}
+				
+				
+			}
+		});
+		
+		//비밀번호 찾기
+		findPwBtn = new JButton("비밀번호찾기");
+		findPwBtn.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				MemberDto dto = new MemberDto();
+				MemberDao dao = new MemberDao();
+				
+				
+	
+				
+				
+				if(dto.getM_pw() != null) {
+					dto=dao.findPw(nameTxt.getText(),birthTxt.getText(),phoneTxt.getText(),emailTxt.getText(),idTxt.getText());
+					JOptionPane.showMessageDialog(null, "비밀번호는( "+dto.getM_pw()+" )입니다.", "비밀번호 찾기", JOptionPane.INFORMATION_MESSAGE);
+				}
+				else {
+					JOptionPane.showMessageDialog(null, "가입된 정보가 없습니다", "비밀번호 찾기", JOptionPane.ERROR_MESSAGE);
+				}
+				
+				
+			}
+		});
+		
+		//텍스트필드
+		 nameTxt = new JTextField();
+		 birthTxt = new JTextField();
+		 phoneTxt = new JTextField();
+		 emailTxt = new JTextField(); 
+		 idTxt = new JTextField();
+		//폰트
 		Font font = new Font("맑은 고딕",Font.BOLD,17);
 		
 		//레이블
@@ -32,18 +108,56 @@ public FindIdPw(){
 		JLabel emailLabel = new JLabel("이메일");
 		JLabel idLabel = new JLabel("아이디"); 
 
+		//라디오 버튼
+		ButtonGroup rdGroup = new ButtonGroup();
+		
+		JRadioButton findId = new JRadioButton("아아디찾기",true);
+		JRadioButton findPw = new JRadioButton("비밀번호찾기");
+		
+		findId.addItemListener(new ItemListener() {
+			
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				if(e.getStateChange()==ItemEvent.SELECTED) {
+					idLabel.setVisible(false);
+					idTxt.setVisible(false);
+					findIdBtn.setVisible(true);
+					findPwBtn.setVisible(false);
+				}
+				
+			}
+		});
+		
+		findPw.addItemListener(new ItemListener() {
+			
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				if(e.getStateChange() == ItemEvent.SELECTED) {
+					idLabel.setVisible(true);
+					idTxt.setVisible(true);
+					findPwBtn.setVisible(true);
+					findIdBtn.setVisible(false);
+				}
+				
+			}
+		});
 
 		
-		//텍스트필드
-		JTextField nameTxt = new JTextField(15);
-		JTextField birthTxt = new JTextField(15);
-		JTextField phoneTxt = new JTextField(15);
-		JTextField emailTxt = new JTextField(15); 
-		JTextField idTxt = new JTextField(15);
+		
+		rdGroup.add(findId);
+		rdGroup.add(findPw);
+		
+		panel.add(findId);
+		panel.add(findPw);
+		
+		findId.setBounds(90,10,100,40);
+		findPw.setBounds(190,10,120,40);
+
 			
 		//버튼생성
-		JButton findIdBtn = new JButton("아이디찾기");
-		JButton findPwBtn = new JButton("비밀번호찾기");
+
+		
+		
 		
 		//레이블 폰트적용
 		idLabel.setFont(font);
@@ -58,20 +172,23 @@ public FindIdPw(){
 		birthLabel.setBounds(60,100,100,40);
 		phoneLabel.setBounds(60,150,100,40);
 		emailLabel.setBounds(60,200,100,40);
-		idLabel.setBounds(60,270,100,40);
+		idLabel.setBounds(60,250,100,40);
 		
 		//텍스트필드 위치 지정
 		nameTxt.setBounds(155,55,160,30);
 		birthTxt.setBounds(155,105,160,30);
 		phoneTxt.setBounds(155,155,160,30);
 		emailTxt.setBounds(155,205,160,30);
-		idTxt.setBounds(155,275,160,30);
+		idTxt.setBounds(155,255,160,30);
 		
 		//버튼 위치 지정
-		findIdBtn.setBounds(90,330,200,50);
-		findPwBtn.setBounds(90,370,200,50);
+		findIdBtn.setBounds(90,330,200,40);
+		findPwBtn.setBounds(90,330,200,40);
 		
 		
+		idLabel.setVisible(false);
+		idTxt.setVisible(false);
+		findIdBtn.setVisible(true);
 		//판넬에 올림
 		add(panel);
 		panel.add(idLabel);
@@ -97,16 +214,11 @@ public FindIdPw(){
 		setResizable(false); // 창 크기조절 불가.
 		
 		
-		
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);//프레임닫히면 전부 종료
-		
-		
-	
-		
+
 		
 	}
 
-	
+
 	public static void main(String[] args) {
 		new FindIdPw();
 
