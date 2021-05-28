@@ -76,14 +76,13 @@ public FindIdPw(){
 				MemberDto dto = new MemberDto();
 				MemberDao dao = new MemberDao();
 				
-				
-	
-				
-				
+
 				if(dto.getM_pw() != null) {
 					dto=dao.findPw(nameTxt.getText(),birthTxt.getText(),phoneTxt.getText(),emailTxt.getText(),idTxt.getText());
 					JOptionPane.showMessageDialog(null, "비밀번호는( "+dto.getM_pw()+" )입니다.", "비밀번호 찾기", JOptionPane.INFORMATION_MESSAGE);
 				}
+
+
 				else {
 					JOptionPane.showMessageDialog(null, "가입된 정보가 없습니다", "비밀번호 찾기", JOptionPane.ERROR_MESSAGE);
 				}
@@ -111,7 +110,7 @@ public FindIdPw(){
 		//라디오 버튼
 		ButtonGroup rdGroup = new ButtonGroup();
 		
-		JRadioButton findId = new JRadioButton("아아디찾기",true);
+		JRadioButton findId = new JRadioButton("아이디찾기",true);
 		JRadioButton findPw = new JRadioButton("비밀번호찾기");
 		
 		findId.addItemListener(new ItemListener() {
@@ -119,10 +118,13 @@ public FindIdPw(){
 			@Override
 			public void itemStateChanged(ItemEvent e) {
 				if(e.getStateChange()==ItemEvent.SELECTED) {
+					
 					idLabel.setVisible(false);
 					idTxt.setVisible(false);
 					findIdBtn.setVisible(true);
 					findPwBtn.setVisible(false);
+					
+					
 				}
 				
 			}

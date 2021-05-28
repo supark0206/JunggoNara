@@ -162,7 +162,6 @@ public class SignUp extends JFrame{
 							
 							
 							dao.mInsert(idTxt.getText(), pwTxt.getText(), nameTxt.getText(), birthTxt.getText(), phoneTxt.getText(), emailTxt.getText());
-							new Login();
 							dispose();
 						}				
 				    }
@@ -170,6 +169,7 @@ public class SignUp extends JFrame{
 					
 			}
 		});
+		
 		
 		JButton idOverlapBtn = new JButton("중복 확인");
 		idOverlapBtn.setFont(font1);
@@ -263,7 +263,7 @@ public class SignUp extends JFrame{
 	
 	//아이디 검사 메소드
 	  public static boolean regularID(String id) {
-			if (Pattern.matches("^[a-zA-z0-9]{6,15}$", id)) {
+			if (Pattern.matches("^[a-z]+[a-z0-9]{5,16}$", id)) {
 				return true;
 
 			} else {
@@ -307,7 +307,7 @@ public class SignUp extends JFrame{
 		}
 	//비밀번호 검사 메소드
 		public static boolean regularPw(String pw) {
-			if(Pattern.matches("^[a-zA-z0-9]{8,12}$", pw)) {
+			if(Pattern.matches("^[a-z]+[a-z0-9]{7,17}$", pw)) {
 				return true;
 			}else {
 				return false;

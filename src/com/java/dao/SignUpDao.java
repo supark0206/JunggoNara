@@ -14,7 +14,7 @@ public class SignUpDao {
 	Connection con = null;
 	PreparedStatement pstmt = null;
 	ResultSet rs = null;
-	
+
 	public SignUpDao() {
 		try {
 			Class.forName(driver);

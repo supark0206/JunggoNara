@@ -30,6 +30,84 @@ public class MemberDao {
 			e.printStackTrace();
 		}
 	}
+	
+	public int chgPw(String m_pw, String m_id) {
+		query = "UPDATE member_info SET m_pw = ? where m_id = ?";
+
+		try {
+			con = DriverManager.getConnection(url, uid, pwd);
+			pstmt = con.prepareStatement(query);
+
+			pstmt.setString(1, m_pw);
+			pstmt.setString(2,m_id);
+			return pstmt.executeUpdate();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+
+				if (rs != null)
+					rs.close();
+				if (pstmt != null)
+					pstmt.close();
+				if (con != null)
+					con.close();
+
+			} catch (Exception e2) {
+				e2.printStackTrace();
+			}
+		}
+		return 0;
+	}
+	
+	public MemberDto memInfo(String m_id) {
+
+		query = "SELECT * FROM member_info WHERE m_id= ?";
+
+		try {
+			con = DriverManager.getConnection(url, uid, pwd);
+			pstmt = con.prepareStatement(query);
+
+			pstmt.setString(1, m_id);
+
+			rs = pstmt.executeQuery();
+
+			if (rs.next()) {
+				MemberDto dto = new MemberDto();
+				String id = rs.getString("m_id");
+				String pw = rs.getString("m_pw");
+				String name = rs.getString("m_name");
+				String email = rs.getString("m_email");
+				String birth = rs.getString("m_birth");
+				String phone = rs.getString("m_phone");
+
+				dto = new MemberDto(id, pw, name, email, birth, phone);
+
+				return dto;
+
+			}
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+
+				if (rs != null)
+					rs.close();
+				if (pstmt != null)
+					pstmt.close();
+				if (con != null)
+					con.close();
+
+			} catch (Exception e2) {
+				e2.printStackTrace();
+			}
+		}
+		return null;
+	}
+	
 
 	public MemberDto findId(String m_name, String m_birth, String m_phone, String m_email) {
 
@@ -128,37 +206,6 @@ public class MemberDao {
 		}
 		return null;
 	}
-	/*
-	 * public ArrayList<MemberDto> findId(String m_name, String m_birth, String
-	 * m_phone, String m_email) {
-	 * 
-	 * query =
-	 * "SELECT * FROM member_info WHERE m_name= ? and m_birth = ? and m_phone = ? and m_email = ?"
-	 * ;
-	 * 
-	 * ArrayList<MemberDto> dtos = new ArrayList<MemberDto>(); try { con =
-	 * DriverManager.getConnection(url, uid, pwd); pstmt =
-	 * con.prepareStatement(query);
-	 * 
-	 * pstmt.setString(1, m_name); pstmt.setString(2, m_birth); pstmt.setString(3,
-	 * m_phone); pstmt.setString(4, m_email); rs = pstmt.executeQuery(query);
-	 * 
-	 * while (rs.next()) {
-	 * 
-	 * String id = rs.getString("m_id"); String pw = rs.getString("m_pw"); String
-	 * name = rs.getString("m_name"); String email = rs.getString("m_email"); String
-	 * birth = rs.getString("m_birth"); String phone = rs.getString("m_phone");
-	 * 
-	 * MemberDto dto = new MemberDto(id, pw, name, email, birth, phone);
-	 * 
-	 * dtos.add(dto);
-	 * 
-	 * } } catch (Exception e) { e.printStackTrace(); } finally { try {
-	 * 
-	 * if (rs != null) rs.close(); if (pstmt != null) pstmt.close(); if (con !=
-	 * null) con.close();
-	 * 
-	 * } catch (Exception e2) { e2.printStackTrace(); } } return dtos; }
-	 */
+	
 
 }
