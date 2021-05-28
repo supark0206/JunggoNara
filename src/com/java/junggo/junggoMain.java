@@ -35,14 +35,16 @@ public class junggoMain extends JFrame{
 	public JLabel userIdLabel;
 	public JPanel scrollPanel;
 	public JScrollPane mainScroll;
-	public JButton test1;
 	JPanel panel;
 	public Font font2;
 
 	public JComboBox<String> pdSortCbox;
 	public JTextField searchTxt;
-	
-	
+
+	ArrayList<ProductDto> dtos;
+	ProductDao pdDao;
+	ProductDto pdDto;
+	JLabel[] pdNumLbl;
 	public junggoMain() {
 		Container con;
 		con = getContentPane();
@@ -135,7 +137,7 @@ public class junggoMain extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				ProductUpload pdUP = new ProductUpload();
-				pdUP.idLabel.setText(userIdLabel.getText());;
+				pdUP.idLabel.setText(userIdLabel.getText());
 				dispose();
 				
 			}
@@ -204,8 +206,8 @@ public class junggoMain extends JFrame{
 
 		System.out.println("메소드내의 이름:"+name+ "/분류:"+sort);
 		// 로그인 하고나면 상품 목록을 보여준다.
-		ProductDao pdDao = new ProductDao();
-		ArrayList<ProductDto> dtos = new ArrayList<ProductDto>();
+		pdDao = new ProductDao();
+		dtos = new ArrayList<ProductDto>();
 		
 		dtos = pdDao.pdSearch(name, sort);
 		// dtos 만큼 배열생성
@@ -218,6 +220,7 @@ public class junggoMain extends JFrame{
 		Image[] imgUse = new Image[dtos.size()];
 		//레이블
 		JLabel[] pdNameLbl = new JLabel[dtos.size()];
+
 		JLabel[] pdPriceLbl = new JLabel[dtos.size()];
 		//버튼 간격
 		GridBagConstraints gbc = new GridBagConstraints();
@@ -225,7 +228,7 @@ public class junggoMain extends JFrame{
 		 
 		 
 		for(int i = 0; i<dtos.size(); i++) {
-			 gbc.gridx = i;
+			gbc.gridx = i;
 			
 			 //이미지 크기 재설정.
 			 imgicon[i] = new ImageIcon(dtos.get(i).getP_image1());
@@ -235,6 +238,8 @@ public class junggoMain extends JFrame{
 			 
 			 System.out.println("상품명 : " + dtos.get(i).getP_name());
 			 System.out.println("======================================");
+
+			 
 			 
 			 //상품 이름 라벨 출력
 			 pdNameLbl[i] = new JLabel( "상품명 : "+dtos.get(i).getP_name());
@@ -268,8 +273,8 @@ public class junggoMain extends JFrame{
 	public void pdView(junggoMain m) {
 
 		// 로그인 하고나면 상품 목록을 보여준다.
-		ProductDao pdDao = new ProductDao();
-		ArrayList<ProductDto> dtos = new ArrayList<ProductDto>();
+		pdDao = new ProductDao();
+		dtos = new ArrayList<ProductDto>();
 		
 		dtos = pdDao.pdSelect();
 		// dtos 만큼 배열생성
@@ -283,14 +288,17 @@ public class junggoMain extends JFrame{
 		//레이블
 		JLabel[] pdNameLbl = new JLabel[dtos.size()];
 		JLabel[] pdPriceLbl = new JLabel[dtos.size()];
+		pdNumLbl = new JLabel[dtos.size()];
 		//버튼 간격
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.insets = new Insets(10, 50, 10, 50);   //(top,left,bottom,right)
-		 
-		 
+
+		int[] num = new int[dtos.size()];
+		
+		
+
 		for(int i = 0; i<dtos.size(); i++) {
 			 gbc.gridx = i;
-			
 			 //이미지 크기 재설정.
 			 imgicon[i] = new ImageIcon(dtos.get(i).getP_image1());
 			 imgChgSize[i] = imgicon[i].getImage();
@@ -300,6 +308,9 @@ public class junggoMain extends JFrame{
 			 System.out.println("상품명 : " + dtos.get(i).getP_name());
 			 System.out.println("======================================");
 			 
+			 //상품 번호 라벨 출력
+			 pdNumLbl[i] = new JLabel(Integer.toString(dtos.get(i).getP_num()));
+			 m.scrollPanel.add(pdNumLbl[i],gbc);
 			 //상품 이름 라벨 출력
 			 pdNameLbl[i] = new JLabel( "상품명 : "+dtos.get(i).getP_name());
 			 pdNameLbl[i].setOpaque(true);
@@ -309,10 +320,26 @@ public class junggoMain extends JFrame{
 			 pdNameLbl[i].setPreferredSize(new Dimension(250, 40));
 			 m.scrollPanel.add(pdNameLbl[i],gbc);
 			 
-			 //상품 이미지 버튼 출력
-			 imgBtns[i]=new JButton();
+			 num[i] = dtos.get(i).getP_num();
+			 
+			 System.out.println(num[i]);
+			 
+			 //상품 이미지 버튼 출력.
+			 imgBtns[i]=new JButton(Integer.toString(num[i]));
 			 imgBtns[i].setPreferredSize(new Dimension(250, 250));
 			 imgBtns[i].setIcon(imgiconUse[i]);
+			 
+			 //상품 상세 페이지 출력.S
+			 imgBtns[i].addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					ProductInfo p = new ProductInfo();
+					p.mnameLbl.setText(pdNameLbl[i].getText());
+					//p.mnameLbl.setText(Integer.toString(dtos.get(i).getP_num()));
+				}
+			});
+			 
 			 m.scrollPanel.add(imgBtns[i],gbc);
 
 			 //상품 가격 라벨 출력
@@ -334,5 +361,6 @@ public class junggoMain extends JFrame{
 		new junggoMain();
 
 	}
+
 
 }

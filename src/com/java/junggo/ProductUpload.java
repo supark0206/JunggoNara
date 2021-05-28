@@ -42,7 +42,6 @@ public class ProductUpload extends JFrame {
 	JFileChooser jc;
 	Login log;
 
-	
 	ProductDao dao  = new ProductDao();
 	public ProductUpload() {
 		Container con;

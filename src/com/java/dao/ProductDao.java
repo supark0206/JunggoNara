@@ -29,8 +29,58 @@ public class ProductDao {
 		}
 	}
 	
+	public ProductDto pdinfo(int num) {
+		String query = "select * from product_info where p_num = ?and p_state=1";
+
+		ProductDto dto = new ProductDto();
+		try {
+			con = DriverManager.getConnection(url, uid, pwd);
+			pstmt = con.prepareStatement(query);
+
+			pstmt.setInt(1, num);
+
+			
+			rs = pstmt.executeQuery();
+
+			if(rs.next()) {
+
+				int p_num = rs.getInt("p_num");
+				String m_id = rs.getString("m_id");
+				String p_image1 = rs.getString("p_image1");
+				String p_image2 = rs.getString("p_image2");
+				String p_name = rs.getString("p_name");
+				int p_price = rs.getInt("p_price");
+				int p_state = rs.getInt("p_state");
+				String p_sort = rs.getString("p_sort");
+				int p_hopeNum = rs.getInt("p_hopeNum");
+				int p_click = rs.getInt("p_click");
+
+				dto = new ProductDto(p_num,m_id,p_image1,p_image2,p_name,p_price,p_state,p_sort,p_hopeNum,p_click);
+
+
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+
+				if (rs != null)
+					rs.close();
+				if (pstmt != null)
+					rs.close();
+				if (con != null)
+					rs.close();
+
+			} catch (Exception e2) {
+				e2.printStackTrace();
+			}
+		}
+		return dto;
+		
+	}	
+	
 	public ArrayList<ProductDto> pdSearch(String name,String sort) {
-		String query = "select * from product_info where p_name = ? and p_sort = ?";
+		String query = "select * from product_info where p_name = ? and p_sort = ? and p_state=1";
 
 		ArrayList<ProductDto> dtos = new ArrayList<ProductDto>();
 		try {
@@ -81,7 +131,7 @@ public class ProductDao {
 	}	
 	
 public ArrayList<ProductDto> pdSelect() {
-	String query = "select * from product_info order by p_click DESC";
+	String query = "select * from product_info where p_state = 1 order by p_click DESC";
 
 	ArrayList<ProductDto> dtos = new ArrayList<ProductDto>();
 	try {
