@@ -40,9 +40,10 @@ public class ProductUpload extends JFrame {
 	public JLabel idLabel;
 	File f ,f2;
 	JFileChooser jc;
-	Login log;
-
 	ProductDao dao  = new ProductDao();
+	
+	
+	
 	public ProductUpload() {
 		Container con;
 		con = getContentPane();
@@ -266,7 +267,8 @@ public class ProductUpload extends JFrame {
 						fileSave1(f,"C:\\Users\\wjdgu\\OneDrive\\Desktop\\image",f.getName());
 						fileSave2(f2,"C:\\Users\\wjdgu\\OneDrive\\Desktop\\image",f2.getName());
 						dao.pdInsert(idLabel.getText(),img1.getText(), img2.getText(), pdNameTxt.getText(), Integer.parseInt(pdPriceTxt.getText()),
-								1,pdContentArea.getText(),pdSortCbox.getSelectedItem().toString());
+								1,pdContentArea.getText(),pdSortCbox.getSelectedItem().toString(),0,0);
+						
 						System.out.println("이미지1 : "+img1.getText()+ "/이미지2 : "+img2.getText()+"/분류 :" + pdSortCbox.getSelectedItem().toString());
 						junggoMain m = new junggoMain();
 						m.pdView(m); // 상품 출력 메소드

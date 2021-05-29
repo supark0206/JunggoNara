@@ -2,10 +2,16 @@ package com.java.junggo;
 
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.Image;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -16,12 +22,21 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import com.java.dao.MemberDao;
+import com.java.dao.ProductDao;
 import com.java.dto.MemberDto;
+import com.java.dto.MyProductMng;
+import com.java.dto.ProductDto;
 
 public class MyShop extends JFrame {
 
 	public JLabel idLabel2, nameLabel2, phoneLabel2, birthLabel2, emailLabel2;
-
+	ArrayList<ProductDto> dtos;
+	ProductDao pdDao;
+	ProductDto pdDto;
+	JButton[] imgBtns;
+	Font font2;
+	
+	
 	public MyShop() {
 		Container con;
 		con = getContentPane();
@@ -33,6 +48,7 @@ public class MyShop extends JFrame {
 
 		// 폰트
 		Font font = new Font("맑은 고딕", Font.BOLD, 18);
+		font2 = new Font("맑은 고딕",Font.PLAIN,20);
 		// 버튼
 		JButton mainBtn = new JButton("메인");
 		mainBtn.setBounds(10, 10, 105, 35);
@@ -53,6 +69,15 @@ public class MyShop extends JFrame {
 		JButton pdUpMngBtn = new JButton("등록상품관리");
 		pdUpMngBtn.setBounds(155, 330, 120, 50);
 		panel.add(pdUpMngBtn);
+		pdUpMngBtn.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				MyProductMng mpd = new MyProductMng();
+				myUploadPd(mpd, "", "", "", "");
+				
+			}
+		});
 
 		JButton chgInfoBtn = new JButton("비밀번호 변경");
 		chgInfoBtn.setBounds(300, 330, 120, 50);
@@ -131,7 +156,122 @@ public class MyShop extends JFrame {
 		setResizable(false); // 창 크기조절 불가.
 	}
 
+	//상품 검색 메소드
+			public void myUploadPd(MyProductMng mPd,String name,String sort ,String state,String id) {
 
+				System.out.println("메소드내의 이름:"+name+ "/분류:"+sort);
+				// 로그인 하고나면 상품 목록을 보여준다.
+				pdDao = new ProductDao();
+				dtos = new ArrayList<ProductDto>();
+				
+				dtos = pdDao.pdSearch(name, sort,state,id);
+				// dtos 만큼 배열생성
+				//버튼
+				imgBtns = new JButton[dtos.size()];  
+				//이미지
+				ImageIcon[] imgicon = new ImageIcon[dtos.size()];
+				ImageIcon[] imgiconUse = new ImageIcon[dtos.size()];
+				Image[] imgChgSize = new Image[dtos.size()];
+				Image[] imgUse = new Image[dtos.size()];
+				//레이블
+				JLabel[] pdNameLbl = new JLabel[dtos.size()];
+
+				JLabel[] pdPriceLbl = new JLabel[dtos.size()];
+				//버튼 간격
+				GridBagConstraints gbc = new GridBagConstraints();
+				gbc.insets = new Insets(10, 50, 10, 50);   //(top,left,bottom,right)
+				int[] num = new int[dtos.size()];
+				 
+				for(int i = 0; i<dtos.size(); i++) {
+					gbc.gridx = i;
+					
+					 //이미지 크기 재설정.
+					 imgicon[i] = new ImageIcon(dtos.get(i).getP_image1());
+					 imgChgSize[i] = imgicon[i].getImage();
+					 imgUse[i] = imgChgSize[i].getScaledInstance(250, 250,Image.SCALE_SMOOTH);
+					 imgiconUse[i] = new ImageIcon(imgUse[i]);
+					 
+					 System.out.println("상품명 : " + dtos.get(i).getP_name());
+					 System.out.println("======================================");
+
+					 
+					 
+					 //상품 이름 라벨 출력
+					 pdNameLbl[i] = new JLabel( "상품명 : "+dtos.get(i).getP_name());
+					 pdNameLbl[i].setOpaque(true);
+					 pdNameLbl[i].setBackground(Color.WHITE);
+					 pdNameLbl[i].setHorizontalAlignment(JLabel.CENTER);
+					 pdNameLbl[i].setFont(font2);
+					 pdNameLbl[i].setPreferredSize(new Dimension(250, 40));
+					 mPd.scrollPanel.add(pdNameLbl[i],gbc);
+					 //상품 가격 라벨 출력
+					 pdPriceLbl[i] = new JLabel( "상품가격 : "+Integer.toString(dtos.get(i).getP_price()));
+					 pdPriceLbl[i].setOpaque(true);
+					 pdPriceLbl[i].setBackground(Color.WHITE);
+					 pdPriceLbl[i].setHorizontalAlignment(JLabel.CENTER);
+					 pdPriceLbl[i].setFont(font2);
+					 pdPriceLbl[i].setPreferredSize(new Dimension(250, 40));
+					 mPd.scrollPanel.add(pdPriceLbl[i],gbc);
+					
+					 //상품 이미지 버튼 출력
+					 num[i] = dtos.get(i).getP_num();
+					 imgBtns[i]=new JButton(Integer.toString(num[i]));
+					 imgBtns[i].setPreferredSize(new Dimension(250, 250));
+					 imgBtns[i].setIcon(imgiconUse[i]);
+					 mPd.scrollPanel.add(imgBtns[i],gbc);
+					 imgBtns[i].addActionListener(new ActionListener() {
+						
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							
+							
+							ProductInfo p = new ProductInfo();
+							pdDao = new ProductDao();
+							pdDto = new ProductDto();
+							//버튼 값을 상품 번호로 설정하여 getActionCommand 로 클릭한 버튼값을 가져온다.
+							int a =Integer.parseInt(e.getActionCommand());
+							//상품 번호를통해 상품 정보 출력
+							pdDto=pdDao.pdinfo(a);
+								//상품상태 출력
+							if(pdDto.getP_state()==1) {
+								
+							}else if(pdDto.getP_state()==0) {
+								p.pdStateLbl2.setText("판매완료");
+							}
+							
+							p.mnameLbl2.setText(pdDto.getM_id());
+							p.pdNameLbl2.setText(pdDto.getP_name());
+							p.pdPricetLbl2.setText(Integer.toString(pdDto.getP_price()));
+							p.pdSortLbl2.setText(pdDto.getP_sort());
+							p.pdhopeLbl2.setText(Integer.toString(pdDto.getP_hopeNum()));
+							p.contentArea.setText(pdDto.getP_content());
+							
+								//판넬 이미지 출력
+							String img1 = pdDto.getP_image1();
+							String img2 = pdDto.getP_image2();
+								
+								//이미지 리사이징
+							 ImageIcon imgicon1 = new ImageIcon(img1);
+							 Image imgChgSize1 = imgicon1.getImage();
+							 Image imgUse1 = imgChgSize1.getScaledInstance(250, 250,Image.SCALE_SMOOTH);
+							 ImageIcon imgiconUse1 = new ImageIcon(imgUse1);
+							 
+							 ImageIcon imgicon2 = new ImageIcon(img2);
+							 Image imgChgSize2 = imgicon2.getImage();
+							 Image imgUse2 = imgChgSize2.getScaledInstance(250, 250,Image.SCALE_SMOOTH);
+							 ImageIcon imgiconUse2 = new ImageIcon(imgUse2);
+							 
+							 p.imgLabel1.setIcon(imgiconUse1);
+							 p.imgLabel2.setIcon(imgiconUse2);
+							
+							pdDao.pdclick(a); //상품 클릭시 클릭횟수 올라감
+							mPd.dispose();
+						}
+					});
+
+				
+				}
+			}
 
 	public static void main(String[] args) {
 

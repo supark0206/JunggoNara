@@ -11,6 +11,18 @@ public class ProductDto {
 	private String p_sort;
 	private int p_hopeNum;
 	private int p_click;
+	private String p_content;
+	
+
+
+	public String getP_content() {
+		return p_content;
+	}
+
+	public void setP_content(String p_content) {
+		this.p_content = p_content;
+	}
+
 	public int getP_num() {
 		return p_num;
 	}
@@ -75,7 +87,7 @@ public class ProductDto {
 		this.p_click = p_click;
 	}
 	public ProductDto(int p_num, String m_id, String p_image1, String p_image2, String p_name, int p_price, int p_state,
-			String p_sort, int p_hopeNum, int p_click) {
+			String p_sort, int p_hopeNum, int p_click,String p_content) {
 		super();
 		this.p_num = p_num;
 		this.m_id = m_id;
@@ -87,6 +99,7 @@ public class ProductDto {
 		this.p_sort = p_sort;
 		this.p_hopeNum = p_hopeNum;
 		this.p_click = p_click;
+		this.p_content = p_content;
 	}
 	
 	

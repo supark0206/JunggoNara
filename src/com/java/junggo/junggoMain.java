@@ -11,10 +11,13 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -36,15 +39,17 @@ public class junggoMain extends JFrame{
 	public JPanel scrollPanel;
 	public JScrollPane mainScroll;
 	JPanel panel;
-	public Font font2;
-
-	public JComboBox<String> pdSortCbox;
+	Font font2;
+	
+	public JComboBox<String> pdSortCbox , pdStateCbox;
 	public JTextField searchTxt;
-
 	ArrayList<ProductDto> dtos;
 	ProductDao pdDao;
 	ProductDto pdDto;
 	JLabel[] pdNumLbl;
+
+	public JButton[] imgBtns;
+	
 	public junggoMain() {
 		Container con;
 		con = getContentPane();
@@ -73,13 +78,13 @@ public class junggoMain extends JFrame{
 		//레이블
 		userIdLabel = new JLabel("사용자아이디");   
 		panel.add(userIdLabel);
-		
+		userIdLabel.setFont(font);
+		userIdLabel.setBounds(30, 30, 200, 50);
 		
 		//텍스트필드
 		searchTxt = new JTextField();
-		searchTxt.setBounds(350,38, 300, 35);
+		searchTxt.setBounds(420,38, 220, 35);
 		panel.add(searchTxt);
-		
 		
 		
 		//버튼
@@ -153,11 +158,22 @@ public class junggoMain extends JFrame{
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				dispose();
+				
 				junggoMain m = new junggoMain();
-				pdSearch(m, searchTxt.getText(),pdSortCbox.getSelectedItem().toString());
-				System.out.println("분류 : "+pdSortCbox.getSelectedItem().toString()+"/검색내용 :"+searchTxt.getText());
-
+				String id = userIdLabel.getText();
+				if(pdStateCbox.getSelectedItem()=="판매중") {
+				pdSearch(m, searchTxt.getText(),pdSortCbox.getSelectedItem().toString(),"1","");
+				m.userIdLabel.setText(id);
+				}else if(pdStateCbox.getSelectedItem()=="판매완료") {
+				pdSearch(m, searchTxt.getText(),pdSortCbox.getSelectedItem().toString(),"0","");
+				m.userIdLabel.setText(id);
+				}else if(pdStateCbox.getSelectedItem()=="전체상품") {
+				pdSearch(m, searchTxt.getText(),pdSortCbox.getSelectedItem().toString(),"","");
+				m.userIdLabel.setText(id);
+				}
+				
+				System.out.println("상태:"+pdStateCbox.getSelectedItem()+ "분류 : "+pdSortCbox.getSelectedItem().toString()+"/검색내용 :"+searchTxt.getText());
+				dispose();
 			}
 		});
 		
@@ -165,16 +181,15 @@ public class junggoMain extends JFrame{
 		//콤보박스
 		String[] pdSortName= {"의류","전자제품","가전제품","생활용품","운동화"};
 		pdSortCbox = new JComboBox<>(pdSortName);
-		pdSortCbox.setBounds(255, 38,90 ,35);
+		pdSortCbox.setBounds(325, 38,90 ,35);
 		panel.add(pdSortCbox);
 		
-		
+		String[] pdStateName= {"전체상품","판매중","판매완료"};
+		pdStateCbox = new JComboBox<>(pdStateName);
+		pdStateCbox.setBounds(230, 38,90 ,35);
+		panel.add(pdStateCbox);
 
-		//레이블 폰트적용
-		userIdLabel.setFont(font);
 	
-		//레이블 위치 지정
-		userIdLabel.setBounds(30, 30, 200, 50);
 	
 		
 		
@@ -202,17 +217,20 @@ public class junggoMain extends JFrame{
 		
 	
 	}
-	public void pdSearch(junggoMain m,String name,String sort) {
+	
+	
+	//상품 검색 메소드
+	public void pdSearch(junggoMain m,String name,String sort ,String state,String id) {
 
 		System.out.println("메소드내의 이름:"+name+ "/분류:"+sort);
 		// 로그인 하고나면 상품 목록을 보여준다.
 		pdDao = new ProductDao();
 		dtos = new ArrayList<ProductDto>();
 		
-		dtos = pdDao.pdSearch(name, sort);
+		dtos = pdDao.pdSearch(name, sort,state,id);
 		// dtos 만큼 배열생성
 		//버튼
-		JButton[] imgBtns = new JButton[dtos.size()];  
+		imgBtns = new JButton[dtos.size()];  
 		//이미지
 		ImageIcon[] imgicon = new ImageIcon[dtos.size()];
 		ImageIcon[] imgiconUse = new ImageIcon[dtos.size()];
@@ -225,7 +243,7 @@ public class junggoMain extends JFrame{
 		//버튼 간격
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.insets = new Insets(10, 50, 10, 50);   //(top,left,bottom,right)
-		 
+		int[] num = new int[dtos.size()];
 		 
 		for(int i = 0; i<dtos.size(); i++) {
 			gbc.gridx = i;
@@ -249,13 +267,6 @@ public class junggoMain extends JFrame{
 			 pdNameLbl[i].setFont(font2);
 			 pdNameLbl[i].setPreferredSize(new Dimension(250, 40));
 			 m.scrollPanel.add(pdNameLbl[i],gbc);
-			 
-			 //상품 이미지 버튼 출력
-			 imgBtns[i]=new JButton();
-			 imgBtns[i].setPreferredSize(new Dimension(250, 250));
-			 imgBtns[i].setIcon(imgiconUse[i]);
-			 m.scrollPanel.add(imgBtns[i],gbc);
-
 			 //상품 가격 라벨 출력
 			 pdPriceLbl[i] = new JLabel( "상품가격 : "+Integer.toString(dtos.get(i).getP_price()));
 			 pdPriceLbl[i].setOpaque(true);
@@ -265,6 +276,63 @@ public class junggoMain extends JFrame{
 			 pdPriceLbl[i].setPreferredSize(new Dimension(250, 40));
 			 m.scrollPanel.add(pdPriceLbl[i],gbc);
 			
+			 //상품 이미지 버튼 출력
+			 num[i] = dtos.get(i).getP_num();
+			 imgBtns[i]=new JButton(Integer.toString(num[i]));
+			 imgBtns[i].setPreferredSize(new Dimension(250, 250));
+			 imgBtns[i].setIcon(imgiconUse[i]);
+			 m.scrollPanel.add(imgBtns[i],gbc);
+			 imgBtns[i].addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					
+					
+					ProductInfo p = new ProductInfo();
+					pdDao = new ProductDao();
+					pdDto = new ProductDto();
+					//버튼 값을 상품 번호로 설정하여 getActionCommand 로 클릭한 버튼값을 가져온다.
+					int a =Integer.parseInt(e.getActionCommand());
+					//상품 번호를통해 상품 정보 출력
+					pdDto=pdDao.pdinfo(a);
+						//상품상태 출력
+					if(pdDto.getP_state()==1) {
+						p.pdStateLbl2.setText("판매중");
+					}else if(pdDto.getP_state()==0) {
+						p.pdStateLbl2.setText("판매완료");
+					}
+					
+					p.mnameLbl2.setText(pdDto.getM_id());
+					p.pdNameLbl2.setText(pdDto.getP_name());
+					p.pdPricetLbl2.setText(Integer.toString(pdDto.getP_price()));
+					p.pdSortLbl2.setText(pdDto.getP_sort());
+					p.pdhopeLbl2.setText(Integer.toString(pdDto.getP_hopeNum()));
+					p.contentArea.setText(pdDto.getP_content());
+					
+						//판넬 이미지 출력
+					String img1 = pdDto.getP_image1();
+					String img2 = pdDto.getP_image2();
+						
+						//이미지 리사이징
+					 ImageIcon imgicon1 = new ImageIcon(img1);
+					 Image imgChgSize1 = imgicon1.getImage();
+					 Image imgUse1 = imgChgSize1.getScaledInstance(250, 250,Image.SCALE_SMOOTH);
+					 ImageIcon imgiconUse1 = new ImageIcon(imgUse1);
+					 
+					 ImageIcon imgicon2 = new ImageIcon(img2);
+					 Image imgChgSize2 = imgicon2.getImage();
+					 Image imgUse2 = imgChgSize2.getScaledInstance(250, 250,Image.SCALE_SMOOTH);
+					 ImageIcon imgiconUse2 = new ImageIcon(imgUse2);
+					 
+					 p.imgLabel1.setIcon(imgiconUse1);
+					 p.imgLabel2.setIcon(imgiconUse2);
+					
+					pdDao.pdclick(a); //상품 클릭시 클릭횟수 올라감
+					m.dispose();
+				}
+			});
+
+		
 		}
 	}
 	
@@ -282,9 +350,9 @@ public class junggoMain extends JFrame{
 		JButton[] imgBtns = new JButton[dtos.size()];  
 		//이미지
 		ImageIcon[] imgicon = new ImageIcon[dtos.size()];
-		ImageIcon[] imgiconUse = new ImageIcon[dtos.size()];
 		Image[] imgChgSize = new Image[dtos.size()];
 		Image[] imgUse = new Image[dtos.size()];
+		ImageIcon[] imgiconUse = new ImageIcon[dtos.size()];
 		//레이블
 		JLabel[] pdNameLbl = new JLabel[dtos.size()];
 		JLabel[] pdPriceLbl = new JLabel[dtos.size()];
@@ -296,8 +364,7 @@ public class junggoMain extends JFrame{
 		int[] num = new int[dtos.size()];
 		
 		
-
-		for(int i = 0; i<dtos.size(); i++) {
+		for(int i=0; i<dtos.size(); i++) {
 			 gbc.gridx = i;
 			 //이미지 크기 재설정.
 			 imgicon[i] = new ImageIcon(dtos.get(i).getP_image1());
@@ -307,10 +374,8 @@ public class junggoMain extends JFrame{
 			 
 			 System.out.println("상품명 : " + dtos.get(i).getP_name());
 			 System.out.println("======================================");
-			 
-			 //상품 번호 라벨 출력
-			 pdNumLbl[i] = new JLabel(Integer.toString(dtos.get(i).getP_num()));
-			 m.scrollPanel.add(pdNumLbl[i],gbc);
+
+
 			 //상품 이름 라벨 출력
 			 pdNameLbl[i] = new JLabel( "상품명 : "+dtos.get(i).getP_name());
 			 pdNameLbl[i].setOpaque(true);
@@ -320,27 +385,9 @@ public class junggoMain extends JFrame{
 			 pdNameLbl[i].setPreferredSize(new Dimension(250, 40));
 			 m.scrollPanel.add(pdNameLbl[i],gbc);
 			 
-			 num[i] = dtos.get(i).getP_num();
+		
 			 
-			 System.out.println(num[i]);
 			 
-			 //상품 이미지 버튼 출력.
-			 imgBtns[i]=new JButton(Integer.toString(num[i]));
-			 imgBtns[i].setPreferredSize(new Dimension(250, 250));
-			 imgBtns[i].setIcon(imgiconUse[i]);
-			 
-			 //상품 상세 페이지 출력.S
-			 imgBtns[i].addActionListener(new ActionListener() {
-				
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					ProductInfo p = new ProductInfo();
-					p.mnameLbl.setText(pdNameLbl[i].getText());
-					//p.mnameLbl.setText(Integer.toString(dtos.get(i).getP_num()));
-				}
-			});
-			 
-			 m.scrollPanel.add(imgBtns[i],gbc);
 
 			 //상품 가격 라벨 출력
 			 pdPriceLbl[i] = new JLabel( "상품가격 : "+Integer.toString(dtos.get(i).getP_price()));
@@ -350,8 +397,66 @@ public class junggoMain extends JFrame{
 			 pdPriceLbl[i].setFont(font2);
 			 pdPriceLbl[i].setPreferredSize(new Dimension(250, 40));
 			 m.scrollPanel.add(pdPriceLbl[i],gbc);
+			 //상품 이미지 버튼 출력.
+			 num[i] = dtos.get(i).getP_num();
+			 imgBtns[i]=new JButton(Integer.toString(num[i]));
+			 imgBtns[i].setPreferredSize(new Dimension(250, 250));
+			 imgBtns[i].setIcon(imgiconUse[i]);
+			 m.scrollPanel.add(imgBtns[i],gbc);
+
+			 //상품 상세 페이지 출력.
+			imgBtns[i].addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					ProductInfo p = new ProductInfo();
+					pdDao = new ProductDao();
+					pdDto = new ProductDto();
+					//버튼 값을 상품 번호로 설정하여 getActionCommand 로 클릭한 버튼값을 가져온다.
+					int a =Integer.parseInt(e.getActionCommand());
+					//상품 번호를통해 상품 정보 출력
+					pdDto=pdDao.pdinfo(a);
+						//상품상태 출력
+					if(pdDto.getP_state()==1) {
+						p.pdStateLbl2.setText("판매중");
+					}else if(pdDto.getP_state()==0) {
+						p.pdStateLbl2.setText("판매완료");
+					}
+					
+					p.mnameLbl2.setText(pdDto.getM_id());
+					p.pdNameLbl2.setText(pdDto.getP_name());
+					p.pdPricetLbl2.setText(Integer.toString(pdDto.getP_price()));
+					p.pdSortLbl2.setText(pdDto.getP_sort());
+					p.pdhopeLbl2.setText(Integer.toString(pdDto.getP_hopeNum()));
+					p.contentArea.setText(pdDto.getP_content());
+					
+						//판넬 이미지 출력
+					String img1 = pdDto.getP_image1();
+					String img2 = pdDto.getP_image2();
+						
+						//이미지 리사이징
+					ImageIcon imgicon1 = new ImageIcon(img1);
+					Image imgChgSize1 = imgicon1.getImage();
+					Image imgUse1 = imgChgSize1.getScaledInstance(250, 250,Image.SCALE_SMOOTH);
+					ImageIcon imgiconUse1 = new ImageIcon(imgUse1);
+					 
+					ImageIcon imgicon2 = new ImageIcon(img2);
+					Image imgChgSize2 = imgicon2.getImage();
+					Image imgUse2 = imgChgSize2.getScaledInstance(250, 250,Image.SCALE_SMOOTH);
+					ImageIcon imgiconUse2 = new ImageIcon(imgUse2);
+					 
+					p.imgLabel1.setIcon(imgiconUse1);
+					p.imgLabel2.setIcon(imgiconUse2);
+					
+					pdDao.pdclick(a); //상품 클릭시 클릭횟수 올라감
+					dispose();
+				}
+			});
+				  
+				
 			
-		}
+		}//여기까지가 포문
+
 	}
 		
 	
@@ -361,6 +466,8 @@ public class junggoMain extends JFrame{
 		new junggoMain();
 
 	}
+
+
 
 
 }

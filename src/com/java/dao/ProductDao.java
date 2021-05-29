@@ -29,8 +29,40 @@ public class ProductDao {
 		}
 	}
 	
+	public void pdclick(int num) {
+		String query = "UPDATE product_info SET p_click = p_click+1 WHERE p_num =?";
+
+		
+		try {
+			con = DriverManager.getConnection(url, uid, pwd);
+			pstmt = con.prepareStatement(query);
+
+			pstmt.setInt(1, num);
+
+			
+			pstmt.executeUpdate();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+
+			
+				if (pstmt != null)
+					pstmt.close();
+				if (con != null)
+					con.close();
+
+			} catch (Exception e2) {
+				e2.printStackTrace();
+			}
+		}
+		
+		
+	}
+	
 	public ProductDto pdinfo(int num) {
-		String query = "select * from product_info where p_num = ?and p_state=1";
+		String query = "select * from product_info where p_num = ?";
 
 		ProductDto dto = new ProductDto();
 		try {
@@ -54,8 +86,9 @@ public class ProductDao {
 				String p_sort = rs.getString("p_sort");
 				int p_hopeNum = rs.getInt("p_hopeNum");
 				int p_click = rs.getInt("p_click");
-
-				dto = new ProductDto(p_num,m_id,p_image1,p_image2,p_name,p_price,p_state,p_sort,p_hopeNum,p_click);
+				String p_content = rs.getString("p_content");
+				
+				dto = new ProductDto(p_num,m_id,p_image1,p_image2,p_name,p_price,p_state,p_sort,p_hopeNum,p_click,p_content);
 
 
 			}
@@ -67,9 +100,9 @@ public class ProductDao {
 				if (rs != null)
 					rs.close();
 				if (pstmt != null)
-					rs.close();
+					pstmt.close();
 				if (con != null)
-					rs.close();
+					con.close();
 
 			} catch (Exception e2) {
 				e2.printStackTrace();
@@ -79,16 +112,18 @@ public class ProductDao {
 		
 	}	
 	
-	public ArrayList<ProductDto> pdSearch(String name,String sort) {
-		String query = "select * from product_info where p_name = ? and p_sort = ? and p_state=1";
+	public ArrayList<ProductDto> pdSearch(String name,String sort,String state,String id) {
+		String query = "select * from product_info where p_name LIKE ? and p_sort LIKE ? and p_state LIKE ? and m_id LIKE ?";
 
 		ArrayList<ProductDto> dtos = new ArrayList<ProductDto>();
 		try {
 			con = DriverManager.getConnection(url, uid, pwd);
 			pstmt = con.prepareStatement(query);
 
-			pstmt.setString(1, name);
-			pstmt.setString(2, sort);
+			pstmt.setString(1, "%"+name+"%");
+			pstmt.setString(2, "%"+sort);
+			pstmt.setString(3, "%"+state);
+			pstmt.setString(4, "%"+id);
 			
 			rs = pstmt.executeQuery();
 
@@ -104,8 +139,9 @@ public class ProductDao {
 				String p_sort = rs.getString("p_sort");
 				int p_hopeNum = rs.getInt("p_hopeNum");
 				int p_click = rs.getInt("p_click");
-
-				ProductDto dto = new ProductDto(p_num,m_id,p_image1,p_image2,p_name,p_price,p_state,p_sort,p_hopeNum,p_click);
+				String p_content = rs.getString("p_content");
+				
+				ProductDto dto = new ProductDto(p_num,m_id,p_image1,p_image2,p_name,p_price,p_state,p_sort,p_hopeNum,p_click,p_content);
 
 				dtos.add(dto);
 
@@ -118,9 +154,9 @@ public class ProductDao {
 				if (rs != null)
 					rs.close();
 				if (pstmt != null)
-					rs.close();
+					pstmt.close();
 				if (con != null)
-					rs.close();
+					con.close();
 
 			} catch (Exception e2) {
 				e2.printStackTrace();
@@ -152,8 +188,9 @@ public ArrayList<ProductDto> pdSelect() {
 			String p_sort = rs.getString("p_sort");
 			int p_hopeNum = rs.getInt("p_hopeNum");
 			int p_click = rs.getInt("p_click");
+			String p_content = rs.getString("p_content");
 
-			ProductDto dto = new ProductDto(p_num,m_id,p_image1,p_image2,p_name,p_price,p_state,p_sort,p_hopeNum,p_click);
+			ProductDto dto = new ProductDto(p_num,m_id,p_image1,p_image2,p_name,p_price,p_state,p_sort,p_hopeNum,p_click,p_content);
 
 			dtos.add(dto);
 
@@ -166,10 +203,9 @@ public ArrayList<ProductDto> pdSelect() {
 			if (rs != null)
 				rs.close();
 			if (pstmt != null)
-				rs.close();
+				pstmt.close();
 			if (con != null)
-				rs.close();
-
+				con.close();
 		} catch (Exception e2) {
 			e2.printStackTrace();
 		}
@@ -178,10 +214,10 @@ public ArrayList<ProductDto> pdSelect() {
 	
 }
 	
-public int pdInsert(String m_id,String p_image1, String p_image2, String p_name, int p_price, int p_state,String p_content,String p_sort) {
+public int pdInsert(String m_id,String p_image1, String p_image2, String p_name, int p_price, int p_state,String p_content,String p_sort,int p_hopeNum,int p_click) {
 
 		
-		String query = "insert into product_info(m_id,p_image1,p_image2,p_name,p_price,p_state,p_content,p_sort) values(?,?,?,?,?,?,?,?)";
+		String query = "insert into product_info(m_id,p_image1,p_image2,p_name,p_price,p_state,p_content,p_sort,p_hopeNum,p_click) values(?,?,?,?,?,?,?,?,?,?)";
 
 		try {
 			con = DriverManager.getConnection(url,uid,pwd);
@@ -194,6 +230,8 @@ public int pdInsert(String m_id,String p_image1, String p_image2, String p_name,
 			pstmt.setInt(6, p_state);
 			pstmt.setString(7, p_content);
 			pstmt.setString(8, p_sort);
+			pstmt.setInt(9, p_hopeNum);
+			pstmt.setInt(10, p_click);
 			
 			return pstmt.executeUpdate();
 		} catch (Exception e) {

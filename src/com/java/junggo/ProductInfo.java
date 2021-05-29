@@ -14,11 +14,11 @@ import javax.swing.JTextArea;
 
 public class ProductInfo extends JFrame {
 	
-	JLabel mnameLbl,pdNameLbl,pdPricetLbl,pdNameLbl2,pdPricetLbl2,mnameLbl2;
+	JLabel mnameLbl,pdNameLbl,pdPricetLbl,pdhopeLbl,pdStateLbl,pdSortLbl,pdNameLbl2,pdPricetLbl2,mnameLbl2,pdhopeLbl2,pdStateLbl2,pdSortLbl2;
 	JButton mainBtn , hopeBtn , chatBtn;
 	JTextArea contentArea;
 	Font font1,areafont;
-	JPanel imgPanel1,imgPanel2;
+	JLabel imgLabel1,imgLabel2;
 	int num;
 	
 	public ProductInfo() {
@@ -34,18 +34,48 @@ public class ProductInfo extends JFrame {
 		mainPanel.setLayout(null);
 		con.add(mainPanel);
 		
-		imgPanel1 = new JPanel();
-		imgPanel1.setLayout(null);
-		imgPanel1.setBounds(70, 70, 300, 300);
-		imgPanel1.setBackground(Color.GRAY);
-		mainPanel.add(imgPanel1);
+		imgLabel1 = new JLabel();
+		imgLabel1.setBounds(70, 70, 300, 300);
+		imgLabel1.setBackground(Color.GRAY);
+		mainPanel.add(imgLabel1);
 		
-		imgPanel2 = new JPanel();
-		imgPanel2.setLayout(null);
-		imgPanel2.setBounds(400, 70, 300, 300);
-		imgPanel2.setBackground(Color.GRAY);
-		mainPanel.add(imgPanel2);
+		imgLabel2 = new JLabel();
+		imgLabel2.setBounds(400, 70, 300, 300);
+		imgLabel2.setBackground(Color.GRAY);
+		mainPanel.add(imgLabel2);
 		//레이블
+		pdSortLbl = new JLabel("상품분류:");
+		pdSortLbl.setBounds(400, 440, 150, 50);
+		pdSortLbl.setFont(font1);
+		mainPanel.add(pdSortLbl);
+		
+		pdSortLbl2 = new JLabel("분류");
+		pdSortLbl2.setBounds(485, 440, 150, 50);
+		pdSortLbl2.setFont(font1);
+		mainPanel.add(pdSortLbl2);
+		
+		
+		pdStateLbl = new JLabel("상품상태:");
+		pdStateLbl.setBounds(400, 490, 150, 50);
+		pdStateLbl.setFont(font1);
+		mainPanel.add(pdStateLbl);
+		
+		pdStateLbl2 = new JLabel("상태");
+		pdStateLbl2.setBounds(485, 490, 150, 50);
+		pdStateLbl2.setFont(font1);
+		mainPanel.add(pdStateLbl2);
+		
+		
+		pdhopeLbl = new JLabel("찜:");
+		pdhopeLbl.setBounds(450, 390, 150, 50);
+		pdhopeLbl.setFont(font1);
+		mainPanel.add(pdhopeLbl);
+		
+		pdhopeLbl2 = new JLabel("찜");
+		pdhopeLbl2.setBounds(480, 390, 150, 50);
+		pdhopeLbl2.setFont(font1);
+		mainPanel.add(pdhopeLbl2);
+		
 		mnameLbl = new JLabel("등록자 :");
 		mnameLbl.setBounds(70, 390, 150, 50);
 		mnameLbl.setFont(font1);
