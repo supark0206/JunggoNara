@@ -29,8 +29,9 @@ public class ProductChg extends JFrame {
 	public JTextField img1 ,img2 ,pdNameTxt , pdPriceTxt;
 	public JButton pdUpBtn, imgUpBtn1 , imgUpBtn2;
 	public JTextArea pdContentArea;
-	public JComboBox<String> pdSortCbox;
-	public JLabel idLabel;
+	public JComboBox<String> pdSortCbox ,pdStateCbox;
+	public JLabel idLabel ,pdnumLbl;
+
 	File f ,f2;
 	JFileChooser jc;
 	ProductDao dao  = new ProductDao();
@@ -57,8 +58,7 @@ public class ProductChg extends JFrame {
 		Font font = new Font("맑은 고딕",Font.BOLD,15);
 		Font font1 = new Font("맑은 고딕",Font.BOLD,17);
 		Font font2 = new Font("맑은 고딕",Font.PLAIN,15);
-		//레이블-------------------------------
-		
+		//텍스트필드
 		img1 = new JTextField();
 		img1.setFont(font);
 		img1.setOpaque(true);
@@ -67,7 +67,7 @@ public class ProductChg extends JFrame {
 		img1.setBounds(30, 200, 200, 35);
 		panel2.add(img1);
 		
-
+	
 		
 		img2 = new JTextField();
 		img2.setFont(font);
@@ -76,8 +76,10 @@ public class ProductChg extends JFrame {
 		img2.setBackground(Color.WHITE);
 		img2.setBounds(30, 250, 200, 35);
 		panel2.add(img2);
-	
 		
+		//레이블-------------------------------
+		
+		pdnumLbl = new JLabel();
 
 		JLabel pdSortLabel = new JLabel("상품분류");
 		pdSortLabel.setFont(font);
@@ -99,10 +101,7 @@ public class ProductChg extends JFrame {
 		pdPriceLabel.setBounds(30, 90, 130, 35);
 		panel2.add(pdPriceLabel);
 		
-		JLabel pdStateLabel = new JLabel("판매중");
-		pdStateLabel.setFont(font1);
-		pdStateLabel.setBounds(180, 145, 130, 35);
-		panel2.add(pdStateLabel);
+
 
 
 	
@@ -129,11 +128,17 @@ public class ProductChg extends JFrame {
 		panel2.add(pdContentArea);
 		
 		//콤보박스
-
 		String[] pdSortName= {"의류","전자제품","가전제품","생활용품","운동화"};
 		pdSortCbox = new JComboBox<>(pdSortName);
 		pdSortCbox.setBounds(100, 10,130 ,35);
 		panel2.add(pdSortCbox);
+		
+		
+
+		String[] pdStateName= {"판매완료","판매중"};
+		pdStateCbox = new JComboBox<>(pdStateName);
+		pdStateCbox.setBounds(150, 145, 130, 35);
+		panel2.add(pdStateCbox);
 		
 		//버튼------------------------------------
 
@@ -155,81 +160,16 @@ public class ProductChg extends JFrame {
 
 		imgUpBtn1 = new JButton("1번 이미지");
 		imgUpBtn1.setBounds(250, 200, 105, 35);
+		imgUpBtn1.setEnabled(false);
 		panel2.add(imgUpBtn1);
-		imgUpBtn1.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if(e.getSource()==imgUpBtn1)
-				{
-					jc = new JFileChooser();
-					//이미지 파일 필터 입니다.
-					FileNameExtensionFilter filter = new FileNameExtensionFilter("이미지 파일", "png", "jpg", "gif");
-					jc.setFileFilter(filter);
-					
-					
-					
-				
-					if(jc.showOpenDialog(jc)==jc.APPROVE_OPTION) {
-						f = jc.getSelectedFile();
-						
-						
-						File Fname = new File("C:\\Users\\wjdgu\\OneDrive\\Desktop\\image"+"\\"+f.getName());
-						
-						//동일한 파일이있으면 값할당 x 
-						if(Fname.isFile()) {
-							JOptionPane.showMessageDialog(null,"동일한 파일이있습니다..","경고",JOptionPane.ERROR_MESSAGE);
-						}else {
-							img1.setText("C:\\Users\\wjdgu\\OneDrive\\Desktop\\image"+"\\"+f.getName());
-						}
-						
-
-					//값을 못받으면 경고창.	
-					}else{
-						JOptionPane.showMessageDialog(null,"파일을 선택하지 않았습니다.","경고",JOptionPane.ERROR_MESSAGE);
-					}
-					
-				}
-				
-			}
-		});
+		
 		
 		imgUpBtn2 = new JButton("2번 이미지");
 		imgUpBtn2.setBounds(250, 250, 105, 35);
+		imgUpBtn2.setEnabled(false);
 		panel2.add(imgUpBtn2);
-		imgUpBtn2.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if(e.getSource()==imgUpBtn2)
-				{
-					jc = new JFileChooser();
-					//이미지 파일 필터 입니다.
-					FileNameExtensionFilter filter = new FileNameExtensionFilter("이미지 파일", "png", "jpg", "gif");
-					jc.setFileFilter(filter);
-					
-					if(jc.showOpenDialog(jc)==jc.APPROVE_OPTION) {
-						f2 = jc.getSelectedFile();
-						File Fname = new File("C:\\Users\\wjdgu\\OneDrive\\Desktop\\image"+"\\"+f2.getName());
-						
-						//동일한 파일이있으면 값할당 x 
-						if(Fname.isFile()) {
-							JOptionPane.showMessageDialog(null,"동일한 파일이있습니다..","경고",JOptionPane.ERROR_MESSAGE);
-						}else {
-							img2.setText("C:\\Users\\wjdgu\\OneDrive\\Desktop\\image"+"\\"+f2.getName());
-						}
-
-						
-					//값을 못받으면 경고창.	
-					}else{
-						JOptionPane.showMessageDialog(null,"파일을 선택하지 않았습니다.","경고",JOptionPane.ERROR_MESSAGE);
-					}
-					
-				}
-				
-			}
-		});
-		pdUpBtn = new JButton("상품등록");
+		
+		pdUpBtn = new JButton("상품수정");
 		pdUpBtn.setBounds(310, 560, 105, 35);
 		panel.add(pdUpBtn);
 		
@@ -251,15 +191,13 @@ public class ProductChg extends JFrame {
 				}
 				
 				else {
-					int uploadChk = JOptionPane.showConfirmDialog(null,"입력하신 정보로 등록하시겠습니까?","상품등록",JOptionPane.YES_NO_OPTION);
+					int uploadChk = JOptionPane.showConfirmDialog(null,"입력하신 정보로 수정하시겠습니까?","상품수정",JOptionPane.YES_NO_OPTION);
 					//회원가입
 					
 					if(uploadChk == JOptionPane.YES_OPTION) {
-						
-						fileSave1(f,"C:\\Users\\wjdgu\\OneDrive\\Desktop\\image",f.getName());
-						fileSave2(f2,"C:\\Users\\wjdgu\\OneDrive\\Desktop\\image",f2.getName());
-						dao.pdInsert(idLabel.getText(),img1.getText(), img2.getText(), pdNameTxt.getText(), Integer.parseInt(pdPriceTxt.getText()),
-								1,pdContentArea.getText(),pdSortCbox.getSelectedItem().toString());
+
+						dao.pdUpdate(pdNameTxt.getText(),Integer.parseInt(pdPriceTxt.getText()),
+								pdStateCbox.getSelectedIndex(),pdSortCbox.getSelectedItem().toString(),pdContentArea.getText(),Integer.parseInt(pdnumLbl.getText()));
 						System.out.println("이미지1 : "+img1.getText()+ "/이미지2 : "+img2.getText()+"/분류 :" + pdSortCbox.getSelectedItem().toString());
 						junggoMain m = new junggoMain();
 						m.pdView(m); // 상품 출력 메소드

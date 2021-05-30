@@ -108,6 +108,8 @@ public class junggoMain extends JFrame{
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				
+				dispose();
 				MyShop mshop = new MyShop();
 				
 				mshop.idLabel2.setText(userIdLabel.getText());

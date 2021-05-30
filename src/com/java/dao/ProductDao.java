@@ -29,6 +29,39 @@ public class ProductDao {
 		}
 	}
 	
+	public void pdUpdate(String pname,int price,int state,String sort,String content,int num) {
+		String query = "UPDATE product_info  SET p_name=?,p_price=?,p_state=?,p_sort=?,p_content = ? WHERE p_num = ?";
+
+		try {
+			con = DriverManager.getConnection(url,uid,pwd);
+			pstmt = con.prepareStatement(query);
+			pstmt.setString(1, pname);
+			pstmt.setInt(2, price);
+			pstmt.setInt(3, state);
+			pstmt.setString(4, sort);
+			pstmt.setString(5, content);
+			pstmt.setInt(6, num);
+			
+			pstmt.executeUpdate();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		} finally {
+			try {
+				if (con != null)
+					con.close();
+				if (pstmt != null)
+					pstmt.close();
+			} catch (Exception e2) {
+				e2.printStackTrace();
+			}
+		}
+
+	}
+	
+	
+	
 	public void pdclick(int num) {
 		String query = "UPDATE product_info SET p_click = p_click+1 WHERE p_num =?";
 

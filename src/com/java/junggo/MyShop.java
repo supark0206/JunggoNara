@@ -24,7 +24,6 @@ import javax.swing.JTextField;
 import com.java.dao.MemberDao;
 import com.java.dao.ProductDao;
 import com.java.dto.MemberDto;
-import com.java.dto.MyProductMng;
 import com.java.dto.ProductDto;
 
 public class MyShop extends JFrame {
@@ -58,7 +57,8 @@ public class MyShop extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				dispose();
-
+				junggoMain m= new junggoMain();
+				m.userIdLabel.setText(idLabel2.getText());
 			}
 		});
 
@@ -75,7 +75,8 @@ public class MyShop extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				MyProductMng mpd = new MyProductMng();
 				myUploadPd(mpd, "", "", "", "");
-				
+				dispose();
+				mpd.userIdLabel.setText(idLabel2.getText());
 			}
 		});
 
@@ -92,7 +93,7 @@ public class MyShop extends JFrame {
 				
 				pwchg.idvalue = idLabel2.getText() ;
 				
-				dispose();
+				
 				
 			}
 		});
@@ -147,6 +148,8 @@ public class MyShop extends JFrame {
 		emailLabel2.setFont(font);
 		emailLabel2.setBounds(160, 270, 250, 35);
 		panel.add(emailLabel2);
+		
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);//프레임닫히면 전부 종료
 
 		// 프레임 설정
 		setVisible(true);
@@ -225,7 +228,7 @@ public class MyShop extends JFrame {
 						public void actionPerformed(ActionEvent e) {
 							
 							
-							ProductInfo p = new ProductInfo();
+							ProductChg pdc = new ProductChg();
 							pdDao = new ProductDao();
 							pdDto = new ProductDto();
 							//버튼 값을 상품 번호로 설정하여 getActionCommand 로 클릭한 버튼값을 가져온다.
@@ -233,36 +236,19 @@ public class MyShop extends JFrame {
 							//상품 번호를통해 상품 정보 출력
 							pdDto=pdDao.pdinfo(a);
 								//상품상태 출력
-							if(pdDto.getP_state()==1) {
-								
-							}else if(pdDto.getP_state()==0) {
-								p.pdStateLbl2.setText("판매완료");
-							}
+
+							pdc.img1.setText(pdDto.getP_image1());
+							pdc.img2.setText(pdDto.getP_image2());
+							pdc.pdPriceTxt.setText(Integer.toString(pdDto.getP_price()));
+							pdc.pdSortCbox.setSelectedItem(pdDto.getP_sort());
+							pdc.pdStateCbox.setSelectedIndex(pdDto.getP_state());
+							pdc.pdnumLbl.setText(Integer.toString(pdDto.getP_num()));
+							pdc.pdContentArea.setText(pdDto.getP_content());
+							pdc.idLabel.setText(pdDto.getM_id());
+							pdc.pdNameTxt.setText(pdDto.getP_content());
 							
-							p.mnameLbl2.setText(pdDto.getM_id());
-							p.pdNameLbl2.setText(pdDto.getP_name());
-							p.pdPricetLbl2.setText(Integer.toString(pdDto.getP_price()));
-							p.pdSortLbl2.setText(pdDto.getP_sort());
-							p.pdhopeLbl2.setText(Integer.toString(pdDto.getP_hopeNum()));
-							p.contentArea.setText(pdDto.getP_content());
-							
-								//판넬 이미지 출력
-							String img1 = pdDto.getP_image1();
-							String img2 = pdDto.getP_image2();
-								
-								//이미지 리사이징
-							 ImageIcon imgicon1 = new ImageIcon(img1);
-							 Image imgChgSize1 = imgicon1.getImage();
-							 Image imgUse1 = imgChgSize1.getScaledInstance(250, 250,Image.SCALE_SMOOTH);
-							 ImageIcon imgiconUse1 = new ImageIcon(imgUse1);
-							 
-							 ImageIcon imgicon2 = new ImageIcon(img2);
-							 Image imgChgSize2 = imgicon2.getImage();
-							 Image imgUse2 = imgChgSize2.getScaledInstance(250, 250,Image.SCALE_SMOOTH);
-							 ImageIcon imgiconUse2 = new ImageIcon(imgUse2);
-							 
-							 p.imgLabel1.setIcon(imgiconUse1);
-							 p.imgLabel2.setIcon(imgiconUse2);
+
+
 							
 							pdDao.pdclick(a); //상품 클릭시 클릭횟수 올라감
 							mPd.dispose();
