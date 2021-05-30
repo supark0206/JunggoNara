@@ -155,7 +155,7 @@ public class ProductUpload extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				junggoMain m = new junggoMain();
 				m.userIdLabel.setText(idLabel.getText());
-				m.pdView(m); // 상품 출력 메소드
+				m.pdSearch(m, "","","",""); // 상품 출력 메소드
 				dispose();
 				
 			}
@@ -271,7 +271,8 @@ public class ProductUpload extends JFrame {
 						
 						System.out.println("이미지1 : "+img1.getText()+ "/이미지2 : "+img2.getText()+"/분류 :" + pdSortCbox.getSelectedItem().toString());
 						junggoMain m = new junggoMain();
-						m.pdView(m); // 상품 출력 메소드
+						m.userIdLabel.setText(idLabel.getText());
+						m.pdSearch(m, "","","",""); // 상품 출력 메소드
 						dispose();
 					}				
 					

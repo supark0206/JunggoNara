@@ -9,8 +9,11 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
+
+import com.java.dao.hopeDao;
 
 public class ProductInfo extends JFrame {
 	
@@ -20,6 +23,7 @@ public class ProductInfo extends JFrame {
 	Font font1,areafont;
 	JLabel imgLabel1,imgLabel2;
 	int num;
+	String user;
 	
 	public ProductInfo() {
 		Container con;
@@ -71,10 +75,12 @@ public class ProductInfo extends JFrame {
 		pdhopeLbl.setFont(font1);
 		mainPanel.add(pdhopeLbl);
 		
+		
 		pdhopeLbl2 = new JLabel("찜");
 		pdhopeLbl2.setBounds(480, 390, 150, 50);
 		pdhopeLbl2.setFont(font1);
 		mainPanel.add(pdhopeLbl2);
+		
 		
 		mnameLbl = new JLabel("등록자 :");
 		mnameLbl.setBounds(70, 390, 150, 50);
@@ -114,6 +120,28 @@ public class ProductInfo extends JFrame {
 		hopeBtn.setBounds(550, 560, 140, 50);
 		hopeBtn.setFont(font1);
 		mainPanel.add(hopeBtn);
+		hopeBtn.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				hopeDao hpDao = new hopeDao();
+				//이미찜했으면 찜목록에서 삭제 아니면 추가.
+				if(1==hpDao.hopeCheck(num, user)) {
+					JOptionPane.showMessageDialog(null, "찜을 해제 합니다.", "찜",
+							JOptionPane.INFORMATION_MESSAGE);
+					hpDao.hopeDelete(num, user);
+				}else if(0==hpDao.hopeCheck(num, user)) {
+					JOptionPane.showMessageDialog(null, "이 상품을 찜 했습니다.", "찜",
+							JOptionPane.INFORMATION_MESSAGE);
+					hpDao.hopeInsert(num, user);
+				}
+				
+				
+			
+				
+				
+			}
+		});
 		
 		chatBtn = new JButton("채팅하기");
 		chatBtn.setBounds(550, 640, 140, 50);
@@ -132,7 +160,9 @@ public class ProductInfo extends JFrame {
 				dispose();
 				junggoMain m = new junggoMain();
 				
-				m.pdView(m);
+				m.pdSearch(m, "","","","");
+				
+				m.userIdLabel.setText(user);
 			}
 		});
 		//텍스트 에리어

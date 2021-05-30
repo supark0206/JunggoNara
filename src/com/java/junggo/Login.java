@@ -92,7 +92,7 @@ public class Login extends JFrame{
 					//로그인시 아이디값 넘겨줌
 					junggoMain m = new junggoMain();
 					m.userIdLabel.setText(idTxt.getText());
-					m.pdView(m); // 상품 출력 메소드
+					m.pdSearch(m, "","","",""); // 상품 출력 메소드
 
 					//로그인 창 닫기
 					dispose();

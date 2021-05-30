@@ -28,6 +28,55 @@ public class ProductDao {
 			e.printStackTrace();
 		}
 	}
+	public ArrayList<ProductDto> hopeSelect(String id) {
+		String query = "SELECT *  from product_info WHERE p_num in (SELECT p_num FROM hope_info WHERE m_id = ? )";
+		ArrayList<ProductDto> hpdtos = new ArrayList<ProductDto>();
+		try {
+				con = DriverManager.getConnection(url, uid, pwd);
+				pstmt = con.prepareStatement(query);
+            
+				pstmt.setString(1, id);
+				rs = pstmt.executeQuery();
+
+				System.out.println("hopeDao :"+id);
+				while(rs.next()) {
+
+				int p_num = rs.getInt("p_num");
+				String m_id = rs.getString("m_id");
+				String p_image1 = rs.getString("p_image1");
+				String p_image2 = rs.getString("p_image2");
+				String p_name = rs.getString("p_name");
+				int p_price = rs.getInt("p_price");
+				int p_state = rs.getInt("p_state");
+				String p_sort = rs.getString("p_sort");
+				int p_hopeNum = rs.getInt("p_hopeNum");
+				int p_click = rs.getInt("p_click");
+				String p_content = rs.getString("p_content");
+				ProductDto dto = new ProductDto(p_num,m_id,p_image1,p_image2,p_name,p_price,p_state,p_sort,p_hopeNum,p_click,p_content);
+				System.out.println("상품이름"+p_name);
+				hpdtos.add(dto);
+				
+
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+
+				if (rs != null)
+					rs.close();
+				if (pstmt != null)
+					pstmt.close();
+				if (con != null)
+					con.close();
+			} catch (Exception e2) {
+				e2.printStackTrace();
+			}
+		}
+		return hpdtos;
+	}
+	
 	
 	public void pdUpdate(String pname,int price,int state,String sort,String content,int num) {
 		String query = "UPDATE product_info  SET p_name=?,p_price=?,p_state=?,p_sort=?,p_content = ? WHERE p_num = ?";
