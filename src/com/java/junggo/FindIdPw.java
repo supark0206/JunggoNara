@@ -54,9 +54,10 @@ public FindIdPw(){
 		
 				
 				
+				dto=dao.findId(nameTxt.getText(),birthTxt.getText(),phoneTxt.getText(),emailTxt.getText());
 
 				if(dto.getM_id() != null) {
-					dto=dao.findId(nameTxt.getText(),birthTxt.getText(),phoneTxt.getText(),emailTxt.getText());
+					
 					JOptionPane.showMessageDialog(null, "아이디는( "+dto.getM_id()+" )입니다.", "아이디 찾기", JOptionPane.INFORMATION_MESSAGE);
 				}
 				else {

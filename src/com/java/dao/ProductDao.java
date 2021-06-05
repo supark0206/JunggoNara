@@ -195,7 +195,7 @@ public class ProductDao {
 	}	
 	
 	public ArrayList<ProductDto> pdSearch(String name,String sort,String state,String id) {
-		String query = "select * from product_info where p_name LIKE ? and p_sort LIKE ? and p_state LIKE ? and m_id LIKE ?";
+		String query = "select * from product_info where p_name LIKE ? and p_sort LIKE ? and p_state LIKE ? and m_id LIKE ? order by p_click desc";
 
 		ArrayList<ProductDto> dtos = new ArrayList<ProductDto>();
 		try {

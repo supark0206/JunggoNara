@@ -143,10 +143,20 @@ public class ProductInfo extends JFrame {
 			}
 		});
 		
-		chatBtn = new JButton("채팅하기");
+		chatBtn = new JButton("쪽지하기");
 		chatBtn.setBounds(550, 640, 140, 50);
 		chatBtn.setFont(font1);
 		mainPanel.add(chatBtn);
+		chatBtn.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				MsgWrite msgw = new MsgWrite();
+				msgw.sendIdLbl2.setText(user);
+				msgw.reciIdLbl2.setText(mnameLbl2.getText());
+			}
+		});
 		
 		mainBtn = new JButton("메인");
 		mainBtn.setBounds(70, 15, 100, 35);

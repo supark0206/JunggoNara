@@ -306,7 +306,7 @@ public class ProductUpload extends JFrame {
 	}
 	
 	
-	
+	//파일 저장 메소드
 	public void fileSave1(File file,String path,String name)
  	{
  		try {
